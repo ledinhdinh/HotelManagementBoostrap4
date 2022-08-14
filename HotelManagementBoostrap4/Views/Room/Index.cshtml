@@ -1,0 +1,181 @@
+﻿@model HotelManagementBoostrap4.ViewModel.RoomViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutBoostrap4.cshtml";
+}
+
+
+<script src="~/Scripts/jquery-2.0.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        LoadRoomDetails();
+     
+
+    });
+
+    function DeleteRoom(roomID) {
+        var result = confirm("Bạn chắc chắn muốn xóa Phòng này không ? ");
+        if (result == false) {
+            return false;
+
+        }
+        $.ajax({
+            async: true,
+            type: 'GET',
+            dataType: 'JSON',
+            contentType: 'applicaton/json; charset=utf-8',
+            data: { roomID: roomID },
+            url: '/Room/DeleteRoomDetail',
+            success: function (data) {
+                if (data.success === true) {
+                    alert(data.message);
+                    LoadRoomDetails();
+                }
+            },
+            error: function () {
+                alert('Something went wrong');
+            }
+        });
+    }
+
+    function EditRoom(roomID) {
+        $.ajax({
+            async: true,
+            type: 'GET',
+            dataType: 'JSON',
+            contentType: 'applicaton/json; charset=utf-8',
+            data: { roomID: roomID },
+            url: '/Room/EditRoomDetail',
+            success: function (data) {
+                $('#divAddRoom').modal('show');
+                $("#txtRoomNumber").val(data.RoomNumber);
+                $("#txtRoomPrice").val(data.RoomPrice);
+                $("#ddBookingStatus").val(data.BookingStatusID);
+                $("#ddRoomType").val(data.RoomTypeID);
+                $("#txtRoomCapacity").val(data.RoomCapacity);
+                $("#txtRoomDesciption").val(data.RoomDesciption);
+                $("#previewImage").attr('src', "../ImageRoom/" + data.RoomImage);
+                $("#txtRoomID").val(data.RoomID);
+                $("#btnSave").text("Cập Nhật");
+
+            },
+            error: function () {
+                alert('Something went wrong edit!');
+            }
+        });
+    }
+   
+
+    function LoadRoomDetails() {
+        // $("divLoadRoomDetails")
+        $.ajax({
+            async: true,
+            data: 'GET',
+            dataType: 'HTML',
+            contentType: false,
+            processData: false,
+            url: '/Room/GetRoomAll',
+            success: function (data) {
+                $("#loadTableData").html(data);
+            },
+            error: function () {
+                alert('Something went wrong load table');
+            }
+        });
+    }
+
+    function DisplayImage(result) {
+        if (result.files && result.files[0]) {
+            var fileReader = new FileReader;
+            fileReader.onload = function (e) {
+                $("#previewImage").attr('src', e.target.result);
+            }
+
+            fileReader.readAsDataURL(result.files[0]);
+        }
+    }
+</script>
+@using (Html.BeginForm("Index", "Room", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#divAddRoom">
+        Thêm Phòng
+    </button>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="divAddRoom" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Phòng</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        @Html.HiddenFor(model => model.RoomID, new { id = "txtRoomID" })
+                        <div class="row mb-3">
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomNumber, new { @class = "form-label" })
+                                @Html.TextBoxFor(model => model.RoomNumber, new { @class = "form-control", id = "txtRoomNumber" })
+                                @Html.ValidationMessageFor(model => model.RoomNumber, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomPrice, new { @class = "form-label" })
+                                @Html.TextBoxFor(model => model.RoomPrice, new { @class = "form-control", id = "txtRoomPrice" })
+                                @Html.ValidationMessageFor(model => model.RoomPrice, "", new { @class = "text-danger" })
+
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.BookingStatusID, new { @class = "form-label" })
+                                @Html.DropDownListFor(model => model.BookingStatusID, new SelectList(Model.ListOfBookingStatus, "Value", "Text"), new { @class = "form-control", id = "ddBookingStatus" })
+                                @Html.ValidationMessageFor(model => model.BookingStatusID, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomTypeID, new { @class = "form-label" })
+                                @Html.DropDownListFor(model => model.RoomTypeID, new SelectList(Model.ListOfRoomType, "Value", "Text"), new { @class = "form-control", id = "ddRoomType" })
+                                @Html.ValidationMessageFor(model => model.RoomTypeID, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomCapacity, new { @class = "form-label" })
+                                @Html.TextBoxFor(model => model.RoomCapacity, new { @class = "form-control", id = "txtRoomCapacity" })
+                                @Html.ValidationMessageFor(model => model.RoomCapacity, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomDesciption, new { @class = "form-label" })
+                                @Html.TextBoxFor(model => model.RoomDesciption, new { @class = "form-control", id = "txtRoomDesciption" })
+                                @Html.ValidationMessageFor(model => model.RoomDesciption, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="form-group col-12">
+                                @Html.LabelFor(model => model.RoomImage, new { @class = "form-label" })
+
+                                <input id="inputGroupFile01" type="file" class="form-control" name="Image" title="Load Image" onchange="DisplayImage(this)" />
+                                <img id="previewImage" height="250" width="250" style="border:1px solid #333" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button id="btnSave" type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    <div id="loadTableData">
+    </div>
+

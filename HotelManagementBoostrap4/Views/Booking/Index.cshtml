@@ -1,0 +1,193 @@
+﻿@model HotelManagementBoostrap4.ViewModel.BookingViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutBoostrap4.cshtml";
+}
+<script src="~/Scripts/jquery-2.0.0.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.13.1.min.js"></script>
+<link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+      rel="stylesheet">
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        DateTimePicker();
+        LoadBookingData();
+    });
+
+
+    //Datepicker của boostrap 3
+    function DateTimePicker() {
+        $('.datepicker').datepicker({
+            dateFormat: 'd/M/yy',
+            changeMonth: true,
+            changeYear: true,
+            minDate: new Date(),
+            autoclose: true,
+            todayHighlight: true
+        });
+
+
+        $("txtBookingFrom").change(function () {
+            var date2 = $("#txtBookingFrom").datepicker('getDate', '+1d');
+            date2.setDate(date2.getDate() + 1);
+            $("#txtBookingTo").val().datepicker('option', 'minDate', date2);
+            $("#txtBookingTo").datepicker('setDate', date2);
+
+        });
+    }
+
+    function ResetBooking() {
+        $("#txtCustomerName").val('');
+        $("#txtCustomerAddress").val('');
+        $("#ddAssignRoom").val('');
+        $("#txtCustomerPhone").val('');
+        $("#txtNumberOfMembers").val('');
+        $("#txtCustomerName").focus();
+    }
+    //Datetimepicker của boostrap 4
+   @* function DateTimePicker() {
+
+
+       <link href="~/Content/jquery.datetimepicker.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.datetimepicker.js"></script>
+
+        $('.datetimepicker').datetimepicker({
+            format: 'd-m-Y H:i',
+            formatTime: 'H:i',
+            formatDate: 'd-m-Y',
+            minDate: new Date()
+        });
+
+        $("txtBookingFrom").change(function () {
+            var date2 = $("#txtBookingFrom").datetimepicker('getDate', '+1d');
+            date2.setDate(date2.getDate() + 1);
+            $("#txtBookingTo").val().datetimepicker('option', 'minDate', date2);
+            $("#txtBookingTo").datetimepicker('setDate', date2);
+
+        });
+    }*@
+
+    function LoadBookingData() {
+        $.ajax({
+            async: true,
+            type: 'GET',
+            dataType: 'HTML',
+            contentType: false,
+            processType: false,
+            url: '/Booking/GetAllBooking',
+            success: function (data) {
+                $("#loadBookingData").html(data);
+            },
+            error: function () {
+                alert('Something went wrong!');
+            }
+        });
+    }
+</script>
+@using (Html.BeginForm("Index", "Booking", FormMethod.Post))
+{
+
+    @Html.AntiForgeryToken()
+
+    <div>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#divNewBooking">Đặt Phòng</button>
+    </div>
+
+
+    <div id="divNewBooking" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Đặt Phòng</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="formCustomerBooking">
+
+                        <div class="container">
+
+                            <div class="row mb-3">
+                                <div class="form-group col-md-6">
+                                    @Html.LabelFor(model => model.CustomerName, new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @id = "txtCustomerName" })
+                                    @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group  col-md-6">
+                                    @Html.LabelFor(model => model.CustomerAddress, new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.CustomerAddress, new { @class = "form-control", @id = "txtCustomeAddress" })
+                                    @Html.ValidationMessageFor(model => model.CustomerAddress, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+
+                                <div class="form-group col-md-6">
+                                    @Html.LabelFor(model => model.BookingFrom, new { @class = "control-label" })
+                                    <div class="icon d-flex flex-row-reverse">
+                                        @Html.EditorFor(model => model.BookingFrom, new { htmlAttributes = new { Value = Model.BookingFrom.ToString("dd-MM-yyyy"), @class = "form-control datepicker", @id = "txtBookingFrom" } })
+                                        <span class="input-group-text" style="color:initial;border:initial;background-color:initial;position:absolute"><i class="bi bi-calendar2-week-fill"></i> </span>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.BookingFrom, "", new { @class = "text-danger" })
+                                </div>
+
+
+                                <div class="form-group  col-md-6">
+                                  @Html.LabelFor(model => model.BookingTo, new { @class = "control-label" })
+                                    <div class="icon d-flex flex-row-reverse">
+                                         @Html.EditorFor(model => model.BookingTo, new { htmlAttributes = new { Value = Model.BookingTo.ToString("dd-MM-yyyy"), @class = "form-control datepicker", @id = "txtBookingTo" } })
+                                         <span class="input-group-text" style="color:initial;border:initial;background-color:initial;position:absolute"> <i class="bi bi-calendar2-week-fill"></i></span>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.BookingTo, "", new { @class = "text-danger" })
+                                </div>
+
+                            </div>
+
+
+                            <div class="row mb-3">
+                                <div class="form-group col-md-6">
+                                    @Html.LabelFor(model => model.CustomerPhone, new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.CustomerPhone, new { @class = "form-control", @id = "txtCustomerPhone" })
+                                    @Html.ValidationMessageFor(model => model.CustomerPhone, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    @Html.LabelFor(model => model.AssignRoomID, new { @class = "control-label" })
+                                    @Html.DropDownListFor(model => model.AssignRoomID, new SelectList(Model.ListOfRooms, "Value", "Text"), new { @class = "form-control form-select ", @id = "ddAssignRoom" })
+                                    @Html.ValidationMessageFor(model => model.AssignRoomID, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+
+                            <div class="row mb-3">
+                                <div class="form-group col-md-6">
+                                    @Html.LabelFor(model => model.NumberOfMembers, new { @class = "control-label" })
+                                    @Html.TextBoxFor(model => model.NumberOfMembers, new { @class = "form-control", @id = "txtNumberOfMembers" })
+                                    @Html.ValidationMessageFor(model => model.NumberOfMembers, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <input id="btnSave" type="submit" value="Lưu" class="btn btn-success" />
+                    @*<button id="btnSave" type="submit" class="btn btn-success">Lưu</button>&nbsp;*@
+                    <button id="btnClose" type="button" data-dismiss="modal" class="btn btn-danger">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="loadBookingData"></div>
+

@@ -1,0 +1,87 @@
+﻿@model IEnumerable<HotelManagementBoostrap4.ViewModel.RoomDetailModel>
+
+<!--Dùng cho table-->
+@*<table class="table table-bordered table-striped">
+        <thead class="thead-dark text-white" style="text-align:center">
+            <tr>
+                <th>Số Phòng</th>
+                <th>Ảnh</th>
+                <th>Giá Phòng</th>
+                <th>Tình Trạng Phòng</th>
+                <th>Loại Phòng</th>
+                <th>Sức Chứa </th>
+                <th>Mô Tả </th>
+                <th>Hành Động </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.RoomNumber</td>
+                    <td><img src="@Url.Content("~/ImageRoom/" + item.RoomImage)" width="150" height="150" class="img-responsive"></td>
+                    <td>@item.RoomPrice  VNĐ  </td>
+                    <td>@item.BookingStatus</td>
+                    <td>@item.RoomType </td>
+                    <td>@item.RoomCapacity</td>
+                    <td>@item.RoomDesciption </td>
+                    <td>
+                        <span class="btn btn-danger" id="btnDelete" onclick="DeleteRoom(@item.RoomID)"><i class="bi bi-trash3-fill"></i></span> &nbsp;&nbsp;
+                        <span class="btn btn-primary" id="btnEdit" onclick="EditRoom(@item.RoomID)"><i class="bi bi-pencil-square"></i></span>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>*@
+
+
+<!--Clolumn Các Phòng-->
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col col-12 col-lg-4 col-md-6 col-sm-12">
+            <div class="card">
+                <img class="card-img-top img-responsive" style="height:250px" src="@Url.Content("~/ImageRoom/" + item.RoomImage)" alt="Card image cap">
+                <div class="card-body mt-2" style="padding:initial">
+                    <div class="d-flex justify-content-between">
+                        <h6>Số Phòng: @item.RoomNumber</h6>
+                        <h6><i class="bi bi-house-fill"></i> @item.RoomType</h6>
+                        <h6><i class="bi bi-people-fill"></i> @item.RoomCapacity người</h6>
+                    </div>
+                    <div>
+                        <h6>@item.RoomDesciption</h6>
+                        <h6>Tình Trạng Phòng :@item.BookingStatus </h6>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="font-weight-normal" style="color:#DF6951"><i class="bi bi-coin"></i> @item.RoomPrice đ</span>
+                        <a href="~/Booking/Index/@item.RoomID" class="btn btn-warning">Đặt Ngay<i class="bi bi-arrow-right ml-2"></i></a>
+                    </div>
+
+                    <span class="btn btn-danger" id="btnDelete" onclick="DeleteRoom(@item.RoomID)"><i class="bi bi-trash3-fill"></i></span> &nbsp;&nbsp;
+                    <span class="btn btn-primary" id="btnEdit" onclick="EditRoom(@item.RoomID)"><i class="bi bi-pencil-square"></i></span>
+                    <!--Link của action result room-->
+                    @* @Html.ActionLink("chi tiet phong", "GetRoomDetail", "Room", new { @item.RoomID }, null)
+        @Html.ActionLink("chi tiet phong", "Detail", "Room", new { @item.RoomID }, null)
+        @Html.ActionLink("chi ", "DetailRoom", "Room", new { @item.RoomID }, null)*@
+                    <!--link của get room partial view-->
+                    @*<span class="btn btn-primary" id="btnEdit" onclick="RoomDetail(@item.RoomID)">
+            @Html.ActionLink("chi tiet phong", "DetailRoom", "Room", new { @item.RoomID }, null)
+            @*  <a href="@Url.Action("DetailRoom","Room"), new {roomID =item.RoomID}">abc</a>
+        </span>*@
+                </div>
+            </div>
+        </div>
+     }
+</div>
+
+
+
+
+
+
+
+

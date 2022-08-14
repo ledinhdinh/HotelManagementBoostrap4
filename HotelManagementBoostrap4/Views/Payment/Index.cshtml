@@ -1,0 +1,80 @@
+﻿@model HotelManagementBoostrap4.ViewModel.PaymentViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutBoostrap4.cshtml";
+}
+
+<h2>Thông tin thanh toán </h2>
+<div class="container">
+        @Html.HiddenFor(model => model.PaymentID, new { id = "txtRoomID" })
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="form-group ">
+                @Html.LabelFor(model => model.BookingID, new { @class = "form-label" })
+                @Html.DropDownListFor(model => model.PaymentTypeID, new SelectList(Model.ListOfBooking, "Value", "Text"), new { @class = "form-control", id = "ddBooking" })
+                @Html.ValidationMessageFor(model => model.BookingID, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PaymentTypeID, new { @class = "form-label" })
+                @Html.DropDownListFor(model => model.PaymentTypeID, new SelectList(Model.ListOfPaymentType, "Value", "Text"), new { @class = "form-control", id = "ddPaymentType" })
+                @Html.ValidationMessageFor(model => model.PaymentTypeID, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PaymentAmount, new { @class = "form-label" })
+                @Html.TextBoxFor(model => model.PaymentAmount, new { @class = "form-control", id = "txtRoomNumber" })
+                @Html.ValidationMessageFor(model => model.PaymentAmount, "", new { @class = "text-danger" })
+            </div>
+
+           
+            <input id="btnSave" type="submit" value="Thanh Toán" class="btn btn-success" />
+        </div>
+
+
+        <div class="col-6" id="loadBookingData">
+            <table class="table table-hover text-center">
+                <thead class="thead-dark text-white">
+                    <tr>
+                        <th>Tên Khách Hàng</th>
+                        <th>Địa Chỉ</th>
+                        <th>Số Điện Thoại</th>
+                        <th>Ngày Đặt Phòng</th>
+                        <th>Ngày Trả Phòng</th>
+                        <th>Số Phòng </th>
+                        <th>Số Lượng Khách </th>
+                        <th>Số Ngày </th>
+                        <th>Giá Phòng </th>
+                        <th>Tổng Tiền </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.RoomsBookings)
+                    {
+                        <tr>
+                            <td>@item.CustomerName</td>
+                            <td>@item.CustomerAddress  </td>
+                            <td>@item.CustomerPhone</td>
+                            <td>@item.BookingFrom.ToString("dd-MM-yyyy") </td>
+                            <td>@item.BookingTo.ToString("dd-MM-yyyy")</td>
+                            <td>@item.RoomNumber </td>
+                            <td>@item.NumberOfMembers </td>
+                            <td>@item.NumberOfDays </td>
+                            <td>@item.RoomPrice VND</td>
+                            <td>
+                                @item.TotalAmount.ToString("#,##0.00") VND
+                            <a href="" class="btn btn-warning mt-1">Thanh Toán</a>
+                        </td>
+
+                    </tr>
+                }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+           
+    
+</div>
